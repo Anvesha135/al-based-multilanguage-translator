@@ -1,0 +1,23 @@
+from googletrans import Translator, LANGUAGES
+import pyttsx3
+
+class TranslatorBackend:
+    def __init__(self):
+        self.translator = Translator()
+        self.tts_engine = pyttsx3.init()
+        self.languages = {lang.title(): code for code, lang in LANGUAGES.items()}
+
+    def get_languages(self):
+        return list(self.languages.keys())
+
+    def translate(self, text, src_lang, tgt_lang):
+        src_code = self.languages.get(src_lang)
+        tgt_code = self.languages.get(tgt_lang)
+        if not src_code or not tgt_code:
+            raise ValueError("Invalid language selection")
+        result = self.translator.translate(text, src=src_code, dest=tgt_code)
+        return result.text
+
+    def speak(self, text):
+        self.tts_engine.say(text)
+        self.tts_engine.runAndWait()
