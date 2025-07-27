@@ -1,0 +1,50 @@
+from googletrans import Translator, LANGUAGES
+import pyttsx3
+
+class TranslatorBackend:
+    def __init__(self):
+        # Initialize Google Translate and Text-to-Speech
+        self.translator = Translator()
+        self.tts_engine = pyttsx3.init()
+        
+        # Map languages to their language codes
+        self.languages = {lang.title(): code for code, lang in LANGUAGES.items()}
+
+    def get_languages(self):
+        """
+        Returns a list of supported language names for the dropdown.
+        """
+        return list(self.languages.keys())
+
+    def translate(self, text, source_lang, target_lang):
+        """
+        Translate text from source_lang to target_lang.
+
+        Parameters:
+            text (str): The text to translate
+            source_lang (str): Language name of input text
+            target_lang (str): Language name of output text
+
+        Returns:
+            str: Translated text
+        """
+        # Get language codes from names
+        src_code = self.languages.get(source_lang)
+        tgt_code = self.languages.get(target_lang)
+
+        if not src_code or not tgt_code:
+            raise ValueError("Invalid language selection")
+
+        # Use Google Translate to perform the translation
+        result = self.translator.translate(text, src=src_code, dest=tgt_code)
+        return result.text
+
+    def speak(self, text):
+        """
+        Speak the given text using the system's TTS engine.
+
+        Parameters:
+            text (str): The text to speak
+        """
+        self.tts_engine.say(text)
+        self.tts_engine.runAndWait()
